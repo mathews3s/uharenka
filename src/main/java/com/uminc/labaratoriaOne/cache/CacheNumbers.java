@@ -1,6 +1,5 @@
 package com.uminc.labaratoriaOne.cache;
 
-import com.uminc.labaratoriaOne.controller.FindMaxNumberController;
 import com.uminc.labaratoriaOne.entity.InputParams;
 import com.uminc.labaratoriaOne.entity.ResultDto;
 import org.springframework.stereotype.Component;

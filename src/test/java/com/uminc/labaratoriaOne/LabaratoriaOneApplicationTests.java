@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -41,17 +40,22 @@ class LabaratoriaOneApplicationTests
 	}
 
 	@Test
-	void textBadRequest() throws Exception
+	void testBadRequestWithWrongTypeParams() throws Exception
 	{
 		MvcResult mvcResult = this.mockMvc.perform(get("/findmaxnumber?first=4&&second=gdfgd&&third=6")).andDo(print()).andExpect(status().isBadRequest()).andReturn();
 		assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResult.getResponse().getStatus());
 	}
+
+    @Test
+    void testBadRequestWithMissingParams() throws Exception
+    {
+        MvcResult mvcResult = this.mockMvc.perform(get("/findmaxnumber?first=4&&wrongName=7&&third=6")).andDo(print()).andExpect(status().isBadRequest()).andReturn();
+        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResult.getResponse().getStatus());
+    }
 
 	@Test
 	void testCorrectResult() {
 		int actual = findMaxNumberController.findMaxNumber(3,4,5).getMaxValue();
 		assertEquals(5, actual);
 	}
-
-
 }
