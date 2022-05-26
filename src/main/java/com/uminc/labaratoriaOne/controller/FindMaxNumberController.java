@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.Valid;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -43,6 +43,31 @@ public class FindMaxNumberController
             logger.info("Successfully request find max number");
             return resultDto;
         }
+    }
+
+    @PostMapping("/findmaxnumber")
+    public ResponseEntity<?> calculateBulk(@Valid @RequestBody List<InputParams> bodyList) {
+        List<ResultDto> resultList = new LinkedList<>();
+        bodyList.forEach((currentElem)->{
+            resultList.add(new ResultDto(Math.max(Math.max(currentElem.getFirst(), currentElem.getSecond()), currentElem.getThird())));
+        });
+
+        logger.info("Successfully postMapping");
+
+        double averageResult = 0;
+        if(!resultList.isEmpty()){
+            averageResult = resultList.stream().mapToInt(ResultDto::getMaxValue).average().getAsDouble();
+        }
+        int maxResult = 0;
+        if(!resultList.isEmpty()){
+            maxResult = resultList.stream().mapToInt(ResultDto::getMaxValue).max().getAsInt();
+        }
+        int minResult = 0;
+        if(!resultList.isEmpty()){
+            minResult = resultList.stream().mapToInt(ResultDto::getMaxValue).min().getAsInt();
+        }
+        return new ResponseEntity<>(resultList + "\nAverage: " + averageResult +
+                "\nMax result: " + maxResult + "\nMin result: " + minResult, HttpStatus.OK);
     }
 
     @GetMapping("/counter")
